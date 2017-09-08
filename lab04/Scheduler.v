@@ -1,4 +1,3 @@
-// ================================================================
 // Scheduler.   This module consists solely of a testbench.
 // It illustrates scheduling differences between blocking
 // and nonblocking statements.
