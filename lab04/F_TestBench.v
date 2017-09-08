@@ -24,11 +24,11 @@ module F_TestBench(
     
 	 );
 	 
-	 /* ¾­¹ı×éºÏÂß¼­µÄÊäÈëÊÜµ½ÑÓÊ±Ó°ÏìÎŞ·¨Á¢¼´¸Ä±ä¸Ã×éºÏÂß¼­µÄÊä³ö */
+	 /* ç»è¿‡ç»„åˆé€»è¾‘çš„è¾“å…¥å—åˆ°å»¶æ—¶å½±å“æ— æ³•ç«‹å³æ”¹å˜è¯¥ç»„åˆé€»è¾‘çš„è¾“å‡º */
 	 
 	reg Data;
 	reg clk;
-	reg Shift;
+	reg [1:0] Shift;
 	reg clr;
 	wire out;
 	
@@ -48,16 +48,16 @@ module F_TestBench(
 	end
 	
 	initial begin
-	#170 Shift=~Shift;
+	#170 Shift=1'b0;
 	Data=1'b0;
 	#15 
-	Shift=~Shift;
+	Shift=1'b1;
 	Data=~Data;
 	end
 	
 	initial begin
-	#200 Shift=~Shift;
-	#15 Shift=~Shift;
+	#200 Shift=1'b0; /*æ³¨æ„æœ€å¥½æŒ‡æ˜å˜é‡ï¼Œè¿™æ ·åç»­ä¿®æ”¹æ·»åŠ åŠŸèƒ½æ—¶èƒ½å°½å¯èƒ½å‡å°‘å·¥ä½œé‡*/
+	#15 Shift=1'b1;
 	end
 	
 	initial begin
@@ -65,9 +65,19 @@ module F_TestBench(
 	#10 Data = ~Data;
 	end
 	
+	initial begin
+	
+	#300 Shift=2'b11;
+	Data=0;
+	#5 Shift=1'b1;
+	Data=1;
+	
+	end
+	
+	
 	FiveBit_Serial_Reg UUT(
 		.Data(Data),
-		.DataOut(out),  /*ÎÈ¶¨ÍÕ·åÊ½,±£Ö¤Á¬½Ó¶Ë¿ÚµÄÕıÈ·ĞÔ*/
+		.DataOut(out),  /*ç¨³å®šé©¼å³°å¼,ä¿è¯è¿æ¥ç«¯å£çš„æ­£ç¡®æ€§*/
 		.clr(clr),
 		.Shift(Shift),
 		.clk(clk)
