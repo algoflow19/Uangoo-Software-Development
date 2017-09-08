@@ -27,17 +27,18 @@ module ThreeFF(
     );
 	 reg forward;
 	 
+	 /*
 	 always@(posedge clk) 
 	 Q <= D;
 	 
 	 always@(negedge clr,posedge clk) begin
-		if(clr == 1'b1) begin
+		if(clr == 1'b0) begin
 			Q <= 1'b0;
 			end
 		else
 			Q <= D;
 	 end
-	 
+	 */
 	 always@(negedge clr,negedge pre,posedge clk)
 		if(clr==1'b0) begin
 		Q <= 1'b0;
@@ -48,9 +49,7 @@ module ThreeFF(
 		else
 		Q <= D;
 		
-	
-	 initial 
-	 forward=1'b1;
+
 	 
 	 always@(negedge clr) 
 	 begin
@@ -62,7 +61,7 @@ module ThreeFF(
 	 always@(negedge pre)
 	 forward <=1'b0;
 	 
-	 always@(posedge pre)
+	 always@(posedge pre)  /* 由x跳变时，仍然会触发pre的上升沿 */
 	 forward <=1'b1;
 	 
 	 
