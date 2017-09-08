@@ -21,15 +21,18 @@
 module mux(
 	input wire in1,
 	input wire in2,
-	input wire sel,
+	input wire in3,
+	input wire [1:0] sel,
 	output reg out
     );
 	 
 	always@(sel,in1,in2) begin
 		if(sel==1'b1)
 		out=in1;
-		else
+		else if(sel==1'b0)
 		out=in2;
+		else
+		out=in3;
 	end
 
 
