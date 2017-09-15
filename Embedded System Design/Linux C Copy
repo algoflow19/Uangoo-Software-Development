@@ -1,0 +1,61 @@
+#include <iostream>
+#include<cstdint>
+#include<sys/types.h>
+#include<sys/stat.h>
+#include<fcntl.h>
+#include<unistd.h>
+
+using namespace std;
+
+int IsFileExiseAndReadble(char *argv[]){
+    if(access(argv[1],F_OK)==0)
+    {
+    if(access(argv[1],R_OK)==0) return 1;
+
+    else {
+    cout<<"File can't be read!"<<endl;
+    return -1;
+    }
+
+    }
+    else {
+        cout<<"File is not there!"<<endl;
+        return -1;
+    }
+
+    }
+// need to know if there is already a file
+
+int main(int argc,char *argv[])
+{
+
+
+    const int BUFFSIZE=1024;
+
+
+
+    int fd;
+    if(IsFileExiseAndReadble(argv)==1)
+    cout<<"Source Found!"<<endl;
+    // Miss a conflict Prevent
+    int fileFrom=open(argv[1],O_RDONLY);
+    char buf[BUFFSIZE];
+    int wordSize;
+    int fileTo;
+    if((fileTo=open(argv[2],O_CREAT|O_WRONLY,S_IRUSR|S_IWUSR))==-1)    //This "|" saves a lot of time!
+    {
+        cout<<"can't creat or write the file to trage"<<endl;
+        return -1;
+    }
+
+    while((wordSize=read(fileFrom,buf,BUFFSIZE))>0)
+    {
+    cout<<write(fileTo,buf,wordSize); // Debug
+    }
+
+    close(fileFrom);
+    close(fileTo);
+
+    return 0;
+
+}
