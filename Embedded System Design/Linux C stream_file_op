@@ -1,0 +1,76 @@
+#include <iostream>
+#include<cstdint>
+#include<sys/types.h>
+#include<sys/stat.h>
+#include<fcntl.h>
+#include<unistd.h>
+#include<sys/resource.h>  //Need this for Process Run
+#include<sys/types.h>
+#include<unistd.h>
+#include<stdio.h>
+using namespace std;
+
+
+int main()
+{
+    // mkdir("TestDir",0666);
+
+    FILE *FromFile=fopen("FromFile","r+");
+
+    FILE *ToFile=fopen("ToFile","wr+");
+
+    char TestWords[] = "This is the Test Words for this test!";
+    char tmp[99];
+
+
+
+
+
+    if(fwrite(TestWords,1,37,FromFile)&&ToFile!=NULL&&FromFile!=NULL)
+    {
+        rewind (FromFile); //Wastes a lot of time for missing this
+        int readcount = fread(tmp,1,37,FromFile);
+        cout<<"This Tmie I read "<<readcount<<endl;
+
+        int i=0;
+        if(readcount!=0)
+        while( i<=36 ){
+        cout<<tmp[i];
+        i++;
+        }
+
+        else
+        cout<<"read Failure!";
+
+        cout<<endl;
+        fclose(FromFile);
+    }
+
+
+        int i=0;
+        while(i<=36)
+        {
+
+        fputc(TestWords[i],ToFile);
+        fseek(ToFile,-1,SEEK_CUR);
+
+        cout<<"Get The Word:"<<char(fgetc(ToFile))<<" It places in the "<<ftell(ToFile)<<endl;
+        i++;
+        }
+
+        fseek(ToFile,0,SEEK_SET);
+        cout<<"Now We In The Place "<<ftell(ToFile)<<endl;
+        // string store;
+        char store[99];
+        getcwd(store,99);
+        cout<<"Now We in "<<store;
+
+
+        // fclose(FromFile);
+        fclose(ToFile);
+
+
+
+
+ return 0;
+}
