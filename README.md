@@ -1,2 +1,3 @@
-# My_IC_DESIGN_PATH
-This repository is bulit to store my work on IC design
+# EMBEDDED LINUX SYSTEMS
+This rep is used to store works about embedded system design.
+
