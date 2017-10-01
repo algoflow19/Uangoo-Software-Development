@@ -1,3 +1,3 @@
-# EMBEDDED LINUX SYSTEMS
+# EMBEDDED LINUX SYSTEMS 爱一门技术。
 This rep is used to store works about embedded system design.
-
+Good at Linux Kernel and Boot-loader、device driver development ，searching for challenge......
