@@ -4,8 +4,8 @@
 #include"fun_include.h"
 
 
-// 支票打印程序 
-// 10=千 11=百 12=十  15=亿 14=万
+// 脰搂脝卤麓貌脫隆鲁脤脨貌 
+// 10=脟搂 11=掳脵 12=脢庐  15=脪脷 14=脥貌
 
 void written_amount(unsigned long int amount, char *buffer1) {
 
