@@ -15,6 +15,7 @@ TokenScanner::TokenScanner(std::string instr)
 }
 void TokenScanner::setInput(std::string instr)
 {
+	
 	sourceStr = instr;
 	start = 0;
 	pos = 0;
@@ -26,31 +27,39 @@ void TokenScanner::setInput(std::string instr)
 	stackPointer = "";
 
 }
+void TokenScanner::setInput(std::istream & infile)
+{
+	this->infile = &infile; // Attention that this is a pointer!
+	sourceStrReflash();
+}
 std::string TokenScanner::nextToken()
-{	
+{
 	std::string tmpStr = "";
-	if (!stringStack.empty()) 
-		return stackpop();
-	if (wskipflag)
-		skipWhiteSpace();
-	if (stringScannFlag) {
-		scannString();
-		if (pos != start) {
-			tmpStr = sourceStr.substr(start, pos - start);
-			start = pos;
-			return tmpStr;
+		if (!stringStack.empty())
+			return stackpop();
+		if (wskipflag)
+			skipWhiteSpace();
+		if (stringScannFlag) {
+			scannString();
+			if (pos != start) {
+				tmpStr = sourceStr.substr(start, pos - start);
+				start = pos;
+				return tmpStr;
+			}
 		}
-	}
-	if (numberScannFlag) {
-		scannNumber();
-		if (start != pos) {
-			tmpStr = sourceStr.substr(start, pos - start);
-			start = pos;
-			return tmpStr;
+		if (numberScannFlag) {
+			scannNumber();
+			if (start != pos) {
+				tmpStr = sourceStr.substr(start, pos - start);
+				start = pos;
+				return tmpStr;
+			}
 		}
-	}
+		return scannDefault();
 
-	return scannDefault();
+	
+	
+	
 }
 
 bool TokenScanner::hasMoreTokens()
@@ -76,13 +85,13 @@ void TokenScanner::setNumberscannFlag()
 
 
 void TokenScanner::saveToken(std::string token)
-{	
+{
 	std::string tmpStr = "";
 	std::stringstream ss;
 	ss << token.length();
-	ss>>tmpStr;
-	stackPointer = tmpStr + "X"+stackPointer;
-	stringStack = token+stringStack;
+	ss >> tmpStr;
+	stackPointer = tmpStr + "X" + stackPointer;
+	stringStack = token + stringStack;
 
 }
 
@@ -100,8 +109,8 @@ char TokenScanner::scannString()
 		}
 		else
 		{
-			pos = sourceStr.find(sourceStr[pos], pos + 1)+1;
-			return sourceStr[pos-1];
+			pos = sourceStr.find(sourceStr[pos], pos + 1) + 1;
+			return sourceStr[pos - 1];
 		}
 	}
 	else
@@ -132,14 +141,14 @@ std::string TokenScanner::scannNumber()
 				caseNumber = 1;
 				pos++;
 				break;
-			} 
+			}
 			else
 				if (sourceStr[pos] == '.') {
 					caseNumber = 2;
 					pos++;
 					break;
 				}
-				else if (sourceStr[pos]=='E')
+				else if (sourceStr[pos] == 'E')
 				{
 					caseNumber = 3;
 					pos++;
@@ -190,7 +199,7 @@ std::string TokenScanner::scannNumber()
 				break;
 			}
 			else return "";
-		default: 
+		default:
 			return "Error Happened!";
 		}
 	}
@@ -221,7 +230,7 @@ std::string TokenScanner::scannDefault() {
 void TokenScanner::skipWhiteSpace()
 {
 	if (sourceStr[pos] == ' ') {
-		while (sourceStr[pos]==' ')
+		while (sourceStr[pos] == ' ')
 		{
 			pos++;
 			start++;
@@ -235,12 +244,26 @@ std::string TokenScanner::stackpop()
 		return "Error";
 
 	std::stringstream ss;
-	ss<<stackPointer.substr(0, stackPointer.find("X"));
+	ss << stackPointer.substr(0, stackPointer.find("X"));
 	int tmpint;
-	ss>> tmpint;
+	ss >> tmpint;
 
-	stackPointer.erase(0, stackPointer.find("X")+1);
+	stackPointer.erase(0, stackPointer.find("X") + 1);
 	std::string tmpStr = stringStack.substr(0, tmpint);
 	stringStack.erase(0, tmpint);
 	return tmpStr;
+}
+
+void TokenScanner::sourceStrReflash()
+{
+	
+	std::string tmpStr;
+	std::string store;
+	while (!infile->fail())
+	{
+		std::getline(*infile, tmpStr);
+		store += tmpStr;
+	}
+	infile->clear();
+	this->setInput(store);
 }
