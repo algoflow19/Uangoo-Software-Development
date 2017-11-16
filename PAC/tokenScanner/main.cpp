@@ -11,18 +11,16 @@ using namespace std;
 
 int main()
 {
+	ifstream infile;
+	infile.open("testfile.txt");
 	TokenScanner scanner;
-	scanner.setInput("   abcddef   \"ABC\" 123445E+777 12345E+ 1234.133E+19  \"aaaaaaa123\" ");
+	scanner.setInput(infile);
 	scanner.setWhiteSpaceSkipFlag();
-	scanner.setStringscannFlag();
-	scanner.setNumberscannFlag();
-	cout << scanner.nextToken() << endl;
-	cout << scanner.nextToken()<<endl;
 	cout << scanner.nextToken() << endl;
 	cout << scanner.nextToken() << endl;
 	cout << scanner.nextToken() << endl;
 	cout << scanner.nextToken() << endl;
-	cout << scanner.nextToken() << endl;
+	
     return 0;
 }
 
