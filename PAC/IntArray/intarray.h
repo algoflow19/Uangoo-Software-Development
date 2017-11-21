@@ -13,7 +13,7 @@ public:
     int get(int k) const;
     void put(int k,int value) ;
     IntArray& operator=(const IntArray& array);
-    int &operator[](int k);
+    int& operator[](int k);
 
 
 private:
