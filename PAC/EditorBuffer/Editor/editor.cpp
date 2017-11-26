@@ -2,12 +2,28 @@
 #include"mystrlib.h"
 using namespace std;
 
-
+/*
+	Attantion: Edit Editor() and loadInput() to change class behaveior
+*/
 Editor::Editor()
 {
 	quitFlag = false;
 	currentInputLine = "";
-	selfTestToken = "IThis is the test word.\nT\nWF\nT\nJ\nT\nWB\nT\nWB\nT\nWD\nT\nQ\n";
+	/*
+	   Select a token to test or changer the loadInput() to see the program run.
+		and you must leave the "Q\n" at the end of token.
+	*/
+	/* replace test */
+	selfTestToken = "IThis is the test word.\nR123\n\T\nRtest/qqqq\nT\nRTh/ABC\nT\nQ\n";
+	/* Search test */
+	//selfTestToken = "IThis is the test word.\nS123\n\T\nStest\nT\nSTh\nT\nQ\n";
+	/* MulTimesOperate test */
+	//selfTestToken = "IThis is the test word.\nT\n6F\nT\n3B\nT\n2D\nT\nQ\n";
+	/* Copy paste and cut test */
+	//selfTestToken = "IThis is the test word.\nT\nJ\nT\n5C\nP\nP\nT\n3X\nP\nT\nQ\n";
+	/* "Word" unit operate */
+	//selfTestToken = "IThis is the test word.\nT\nWF\nT\nWF\nT\nJ\nT\nWB\nT\nWB\nT\nWD\nT\nQ\n";
+	/* F B J E test */
 	//selfTestToken = "IThis is the test word.\nT\nJ\nT\nB\nT\nE\nT\nF\nD\nT\nH\nQ\n";
 }
 
@@ -26,11 +42,16 @@ void Editor::loadUserInput()
 
 void Editor::doOperation()
 {
+	doOperations(executeTimes);
+}
+
+void Editor::doOperations(int exTimes)
+{
 	string tmp;
 	int jumpLength = 0;
 	int cursorPos = 0;
 
-	for (int i = 1; i <= executeTimes;i++)
+	for (int i = 1; i <= exTimes;i++)
 	switch (currenCommond) {
 	case cursorForware:
 		buffer.moveCursorForware();
@@ -65,7 +86,6 @@ void Editor::doOperation()
 	case forwareWord:
 		tmp = buffer.getText();
 		cursorPos = buffer.getCursor();
-		cout << "This is cursorPos: "<<cursorPos << endl;
 		while (cursorPos-jumpLength-1>=0&&!isalnum(tmp[cursorPos - jumpLength-1])){
 			jumpLength++;
 		}
@@ -73,10 +93,8 @@ void Editor::doOperation()
 			jumpLength++;
 		}
 		if (jumpLength != 0) {
-			executeTimes = jumpLength;
 			currenCommond = cursorForware;
-			doOperation();
-			executeTimes = 1;
+			doOperations(jumpLength);
 		}
 		break;
 	case backwareWord:
@@ -90,27 +108,54 @@ void Editor::doOperation()
 			jumpLength++;
 		}
 		if (currenCommond==backwareWord&&jumpLength != 0) {
-			executeTimes = jumpLength;
 			currenCommond = cursorBackware;
-			doOperation();
-			executeTimes = 1;
+			doOperations(jumpLength);
+
 		}
 		else if (jumpLength != 0) {
-			executeTimes = jumpLength;
 			currenCommond = del;
-			doOperation();
-			executeTimes = 1;
+			doOperations(jumpLength);
 		}
 		break;
 		
-	case showHelp:
-		getHelp();
-		break;
 	case showText:
 		tmp = buffer.getText();
 		tmp.insert(buffer.getCursor(),"|" );
 		cout << tmp << endl;
 		break;
+	case showHelp:
+		getHelp();
+		break;
+	case copyText:
+		buffer.copy(executeTimes);
+		exTimes = 1;
+		break;
+	case pasteText:
+		buffer.paste();
+		break;
+	case cutText:
+		buffer.copy(executeTimes);
+		currenCommond = del;
+		doOperations(executeTimes);
+		exTimes = 1;
+		break;
+	case search:
+		if (!buffer.search(currentInputLine))
+			cout << "Search failed!" << endl;
+		break;
+	case replace:
+		if (buffer.search(currentInputLine.substr(0, currentInputLine.find("/")))) {
+			jumpLength = currentInputLine.substr(0, currentInputLine.find("/")).length();
+			for (int i = 1; i <= jumpLength; i++)
+				buffer.backspaceChar();
+			currentInputLine = currentInputLine.substr(currentInputLine.find("/") + 1);
+			currenCommond = chInsert;
+			doOperations(1);
+
+		}
+			cout << "Replace failed!" << endl;
+			break;
+
 	case quitEditor:
 		quitFlag = true;
 		break;
@@ -193,17 +238,41 @@ void Editor::extractCommond()
 		switch (currenCommond) {
 		case cursorForware:
 			currenCommond = forwareWord;
+			currentInputLine.erase(0, 1);
 			break;
 		case cursorBackware:
 			currenCommond = backwareWord;
+			currentInputLine.erase(0, 1);
 			break;
 		case del:
 			currenCommond = delWord;
+			currentInputLine.erase(0, 1);
 			break;
 		}
 		break;
+	case 'C':
+		currenCommond = copyText;
+		currentInputLine.erase(0, 1);
+		break;
+	case 'P':
+		currenCommond = pasteText;
+		currentInputLine.erase(0, 1);
+		break;
+	case 'X':
+		currenCommond = cutText;
+		currentInputLine.erase(0, 1);
+		break;
+	case 'S':
+		currenCommond = search;
+		currentInputLine.erase(0, 1);
+		break;
+	case 'R':
+		currenCommond = replace;
+		currentInputLine.erase(0, 1);
+		break;
 	case 'Q':
 		currenCommond = quitEditor;
+		currentInputLine.erase(0, 1);
 		break;
 	default:
 		cout << "You had a incorrect input!" << endl;

@@ -20,10 +20,12 @@ public:
 	void moveCursorBackware();
 	void moveCursorStart();
 	void moveCursorEnd();
-
+	void copy(int count);
+	void paste();
 	void insertChar(char word);
 	void delChar();
 	void backspaceChar();
+	bool search(std::string str);
 
 	std::string getText() const;
 	int getCursor() const;
@@ -35,9 +37,9 @@ private:
 		node* Nlink;
 		//node* Blink;
 	};
-
+	bool isThisPlace(node * tmpNode,std::string str) const;
+	std::string copyStore;
 	node* start;
 	node* cursor;
-
 
 };

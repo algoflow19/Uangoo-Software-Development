@@ -10,6 +10,8 @@ enum commond
 	mulLineInsert, chInsert,
 	showHelp,showText,
 	forwareWord,backwareWord,delWord,
+	copyText,pasteText,cutText,
+	search,replace,
 	quitEditor
 };
 
@@ -32,6 +34,7 @@ private:
 	inline void loadInput();
 	void extractCommond();
 	void getHelp() const;
+	void doOperations(int exTimes);
 
 	std::string selfTestToken;
 	std::string getCurrentToken();
