@@ -115,14 +115,16 @@ inline Queue<type>::Queue(const Queue<type>& src)
 template<typename type>
 inline Queue<type> & Queue<type>::operator=(const Queue<type>& src)
 {
+	if(&src!=this){
 	captity = src.captity;
 	head = src.head;
 	count = src.count;
 	if(rep!=NULL)
 	delete[] rep;
 	rep = new type[captity];
-	for (int i = 0; i < count; i++) {
+	for (int i = 0; i < count; i++) 
 		rep[(i + head)%captity] = src.rep[(i + head ) % captity];
+	
 	}
 	return *this;
 }
