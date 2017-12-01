@@ -14,6 +14,8 @@ public:
 	void enqueue(type value);
 	type dequeue();
 	type peek() const;
+	void reverse();
+	void debugShow() const;		// move this to "public area" to using it.
 
 	Queue(const Queue<type> & src);
 	Queue & operator=(const Queue<type> & src);
@@ -27,7 +29,7 @@ private:
 	void expRep();
 
 	
-	void debugShow() const;		// move this to "public area" to using it.
+	
 };
 
 template<typename type>
@@ -94,6 +96,16 @@ inline type Queue<type>::peek() const
 }
 
 template<typename type>
+inline void Queue<type>::reverse()
+{
+	for (int i = 0; i < count/2; i++) {
+		type tmp = rep[(head + i) % captity];
+		rep[(head + i) % captity] = rep[(head + count - i-1) % captity];
+		rep[(head + count - i-1) % captity] = tmp;
+	}
+}
+
+template<typename type>
 inline Queue<type>::Queue(const Queue<type>& src)
 {
 	rep = NULL;
@@ -110,7 +122,7 @@ inline Queue<type> & Queue<type>::operator=(const Queue<type>& src)
 	delete[] rep;
 	rep = new type[captity];
 	for (int i = 0; i < count; i++) {
-		rep[(i + head+captity)%captity] = src.rep[(i + head + captity) % captity];
+		rep[(i + head)%captity] = src.rep[(i + head ) % captity];
 	}
 	return *this;
 }
@@ -119,7 +131,7 @@ template<typename type>
 inline void Queue<type>::debugShow() const
 {
 	for (int i = 0; i < count; i++) {
-		std::cout << rep[(i + head + captity) % captity] << std::endl;
+		std::cout << rep[(i + head ) % captity] << std::endl;
 	}
 }
 
@@ -129,7 +141,7 @@ inline void Queue<type>::expRep()
 	type* tmp = rep;
 	rep = new type[captity*2];
 	for (int i = 0; i < count; i++) {
-		rep[head+i] = tmp[( head + i + captity) % captity];
+		rep[head+i] = tmp[( head + i) % captity];
 	}
 	captity *= 2;
 	delete[] tmp;
