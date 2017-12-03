@@ -22,7 +22,7 @@ int main() {
 	assert(Q2.dequeue() == 2);
 	assert(Q2.dequeue() == 3);
 	assert(Q2.isEmpty() == true);
-	Queue<int> Q3(Q1);
+	Queue<int> Q3(Q1),Q4(Q1);
 	Q3.enqueue(4);
 	Q3.enqueue(5);
 	Q3.enqueue(6);
@@ -36,6 +36,17 @@ int main() {
 	assert(Q3.dequeue() == 6);
 	assert(Q3.isEmpty() == true);
 	assert(Q3.size() == 0);
+	//reverse test
+	Q4.enqueue(4);
+	Q4.enqueue(5);
+	Q4.enqueue(6);
+	Q4.reverse();
+	assert(Q4.dequeue() == 6);
+	assert(Q4.dequeue() == 5);
+	assert(Q4.dequeue() == 4);
+	Q4.reverse();
+	assert(Q4.dequeue() == 2);
+	assert(Q4.dequeue() == 3);
 
 	std::cout << "Class Queue passed the test! " << std::endl;
 
