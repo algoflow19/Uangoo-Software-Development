@@ -7,12 +7,18 @@ void displayFamilyTreeNode(FamilyTreeNode * tree);
 FamilyTreeNode* readFamilyTree(string fileName);
 FamilyTreeNode* findPeole(FamilyTreeNode *tree, string name);
 void DodisplayFamilyTreeNode(FamilyTreeNode* tree,string prefix);
+FamilyTreeNode* commonAncestor(FamilyTreeNode* p1, FamilyTreeNode* p2);
+
+static const int MAX_HEIGHT = 5;
 
 int main() {
 
 
 	FamilyTreeNode* tmp=readFamilyTree("testfile");
 	displayFamilyTreeNode(tmp);
+	FamilyTreeNode* p1 = findPeole(tmp, "Adela");
+	FamilyTreeNode* p2 = findPeole(tmp, "Stephen");
+	cout << commonAncestor(p1, p2)->getName() << endl;
 
 	return 0;
 }
@@ -60,4 +66,32 @@ void DodisplayFamilyTreeNode(FamilyTreeNode* tree, string prefix) {
 		FamilyTreeNode* tmp = tree->getChild(i);
 		DodisplayFamilyTreeNode(tmp, prefix+"  ");
 	}
+}
+
+FamilyTreeNode* commonAncestor(FamilyTreeNode* p1, FamilyTreeNode* p2) {
+	FamilyTreeNode** List1 = new FamilyTreeNode*[MAX_HEIGHT];
+	for (int i = 0; ; i++) {
+		if (p1->getPartent() != NULL) {
+			List1[i] = p1->getPartent();
+			p1 = List1[i];
+		}
+		else {
+			List1[i] = NULL;
+			break;
+		}
+	}
+
+	while (p2->getPartent()!=NULL)
+	{
+		for (int i = 0; ; i++) {
+			if (List1[i] == NULL) break;
+			if (List1[i] == p2->getPartent()) {
+				delete[] List1;
+				return p2->getPartent();
+			}
+		}
+		p2 = p2->getPartent();
+	}
+
+	return NULL;
 }
