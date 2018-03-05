@@ -15,3 +15,7 @@ expected primary-expression before 'unsigned'
 cause stack smashing!
 2018年 02月 28日 星期三 00:37:57 CST
 Make sure that your codes is doing what you want!
+2018年 03月 06日 星期二 00:19:46 CST
+template<typename NodeType,typename ArcType>
+void addToSetOne(Graph<NodeType,ArcType> & g,Set<NodeType*> &one,Set<NodeType*> &zero,NodeType* node);
+/* This funtion can't be referenced beacuse NodeType* node is defined! */
