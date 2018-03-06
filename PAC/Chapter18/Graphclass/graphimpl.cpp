@@ -41,7 +41,7 @@ int catchSymbol(std::string & str){
 }
 
 double catchCost(std::string & str){
-    int left,right;
+    int left,right=-1;
 
     for(int i=str.length()-1;i>=0;i--){
         if(str[i]==')') right=i;
@@ -50,6 +50,7 @@ double catchCost(std::string & str){
             break;
         }
     }
+    if(right==-1) return 0;
     double result=stringToDouble(str.substr(left+1,right-left-1));
     str=str.substr(0,left);
     return result;

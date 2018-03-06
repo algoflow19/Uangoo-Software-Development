@@ -376,6 +376,11 @@ inline ArcType* Graph<NodeType,ArcType>::addArc(NodeType *n1, NodeType *n2,const
     return addArc(ap);
 }
 
+
+class Arc;
+class DegreeNode;
+
+
 class City {
 
 public:
@@ -388,6 +393,26 @@ private:
    Set<Flight *> arcs;
    std::string airportCode;
    friend class Graph<City,Flight>;
+
+};
+
+class DegreeNode{
+public:
+    std::string getName(){
+        return name;
+    }
+    void setDegree(int degree){
+        this->degree=degree;
+    }
+    int getDegree(){
+        return degree;
+    }
+
+private:
+    std::string name;
+    Set<Arc *> arcs;
+    int degree;
+    friend class Graph<DegreeNode,Arc>;
 
 };
 
@@ -421,10 +446,37 @@ private:
    City *finish;
    int distance;
    friend class Graph<City,Flight>;
+   friend class Graph<DegreeNode,Flight>;
 };
 
 
 
+class Arc {
+
+public:
+   DegreeNode *getStart() {
+      return start;
+   }
+
+   DegreeNode *getFinish() {
+      return finish;
+   }
+
+   int getDistance() {
+      return distance;
+   }
+
+   void setDistance(int miles) {
+      distance = miles;
+   }
+
+private:
+   DegreeNode*start;
+   DegreeNode*finish;
+   int distance;
+   friend class Graph<City,Flight>;
+   friend class Graph<DegreeNode,Arc>;
+};
 
 
 #endif // GRAPH_H
