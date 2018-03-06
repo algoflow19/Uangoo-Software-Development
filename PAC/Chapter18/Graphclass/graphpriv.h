@@ -63,6 +63,7 @@ public:
      */
 
     Vector<ArcType*>  findShortestPath();
+    bool isExistPath(NodeType* n1,NodeType* n2);
 
 private:
     Set<NodeType*> nodeSet;
@@ -77,6 +78,13 @@ private:
     Vector<ArcType*>  DijkstraFindPath(NodeType* start,NodeType* finish);
     int getPathLength(Vector<ArcType*>& path);
 };
+
+template <typename NodeType,typename ArcType>
+inline bool Graph<NodeType,ArcType>::isExistPath(NodeType* n1,NodeType* n2){
+    return DijkstraFindPath(n1,n2).size()!=0;
+}
+
+
 template <typename NodeType,typename ArcType>
 inline Vector<ArcType*> Graph<NodeType,ArcType>::findShortestPath(){
     std::string start;
@@ -165,6 +173,12 @@ inline void Graph<NodeType,ArcType>::removeNode(NodeType* node){
         nodeSet.remove(node);
         nameMap.remove(node->getName());
     }
+}
+
+
+template<typename NodeType,typename ArcType>
+inline NodeType* Graph<NodeType,ArcType>::getNode(std::string name){
+    return nameMap.get(name);
 }
 
 template<typename NodeType,typename ArcType>
@@ -374,6 +388,7 @@ private:
    Set<Flight *> arcs;
    std::string airportCode;
    friend class Graph<City,Flight>;
+
 };
 
 /*
