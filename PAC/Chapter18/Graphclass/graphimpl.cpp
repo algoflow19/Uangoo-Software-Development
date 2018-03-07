@@ -55,3 +55,5 @@ double catchCost(std::string & str){
     str=str.substr(0,left);
     return result;
 }
+
+

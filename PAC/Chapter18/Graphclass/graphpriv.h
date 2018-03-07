@@ -13,10 +13,33 @@
 class City;       /* Forward references to these two types so  */
 class Flight;     /* that the C++ compiler can recognize them. */
 
+/*
+ * This Implation is for figruing out new way to complete program
+ */
 
 
 
+class indexToName : public Map<int,std::string>{
+public:
+    indexToName(){
+        add(0,"BBN");
+        add(1,"CMU");
+        add(2,"HARV");
+        add(3,"MIT");
+        add(4,"NRL");
+        add(5,"RAND");
+        add(6,"SRI");
+        add(7,"STAN");
+        add(8,"UCLA");
+        add(9,"UTAH");
+    }
+};
 
+
+
+/*
+ * The new way end here.
+ */
 
 template<typename NodeType,typename ArcType>
 class Graph
@@ -394,6 +417,62 @@ private:
    std::string airportCode;
    friend class Graph<City,Flight>;
 
+};
+
+class IMP;
+class ConnectLine;
+
+class IMP {
+
+public:
+   std::string getName() {
+      return name;
+   }
+   int getPosDistance(std::string name){
+       return checkList.get(name);
+   }
+   void SetPosDistance(std::string name,int distance){
+       checkList[name]=distance;
+   }
+   bool isPosInit(std::string name){
+       return checkList.containsKey(name);
+   }
+   int size(){
+       return checkList.size();
+   }
+
+private:
+   std::string name;
+   Set<ConnectLine *> arcs;
+   friend class Graph<IMP,ConnectLine>;
+   Map<std::string,int> checkList;
+
+};
+
+class ConnectLine{
+
+public:
+   IMP *getStart() {
+      return start;
+   }
+
+   IMP *getFinish() {
+      return finish;
+   }
+
+   int getDistance() {
+      return distance;
+   }
+
+   void setDistance(int miles) {
+      distance = miles;
+   }
+
+private:
+   IMP *start;
+   IMP  *finish;
+   int distance;
+   friend class Graph<IMP,ConnectLine>;
 };
 
 class DegreeNode{
