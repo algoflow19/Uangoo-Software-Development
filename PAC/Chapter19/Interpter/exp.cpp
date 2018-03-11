@@ -53,6 +53,12 @@ Expression *Expression::getRHS() {
    return NULL;
 }
 
+Expression *Expression::getHS()
+{
+    error("getHS: Illegal expression type");
+    return NULL;
+}
+
 /*
  * Implementation notes: ConstantExp
  * ---------------------------------
@@ -188,4 +194,38 @@ int EvaluationContext::getValue(string var) {
 
 bool EvaluationContext::isDefined(string var) {
    return symbolTable.containsKey(var);
+}
+
+SingleOpExp::SingleOpExp(Expression *hs, string op)
+{
+    this->hs=hs;
+    this->op=op;
+}
+
+double SingleOpExp::eval(EvaluationContext &context)
+{
+    if(op=="-")
+    return (-1)*hs->eval(context);
+    return -1;
+    error("Unknow Symbol");
+}
+
+string SingleOpExp::toString()
+{
+    return op+hs->toString();
+}
+
+ExpressionType SingleOpExp::getType()
+{
+    return SINGLEOPEXP;
+}
+
+string SingleOpExp::getOperator()
+{
+    return op;
+}
+
+Expression* SingleOpExp::getHS()
+{
+    return hs;
 }

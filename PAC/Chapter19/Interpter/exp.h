@@ -24,7 +24,7 @@ class EvaluationContext;
  * expression types: CONSTANT, IDENTIFIER, and COMPOUND.
  */
 
-enum ExpressionType { CONSTANT, IDENTIFIER, COMPOUND };
+enum ExpressionType { CONSTANT, IDENTIFIER, COMPOUND ,SINGLEOPEXP };
 
 /*
  * Class: Expression
@@ -37,7 +37,7 @@ enum ExpressionType { CONSTANT, IDENTIFIER, COMPOUND };
  *  1. ConstantExp   -- an integer constant
  *  2. IdentifierExp -- a string representing an identifier
  *  3. CompoundExp   -- two expressions combined by an operator
- *
+ *  4. SingleOpExp   -- one expressions combined by an operator
  * The Expression class defines the interface common to all expressions;
  * each subclass provides its own implementation of the common interface.
  */
@@ -109,7 +109,7 @@ public:
    virtual std::string getOperator();
    virtual Expression *getLHS();
    virtual Expression *getRHS();
-
+   virtual Expression *getHS();
 };
 
 /*
@@ -211,6 +211,27 @@ private:
    Expression *lhs, *rhs;       /* The left and right subexpression  */
 
 };
+
+/*
+ * Class: SingleOpExp
+ * ------------------
+ * To support single operator exp.
+ */
+class SingleOpExp : public Expression{
+public:
+
+    SingleOpExp(Expression* hs,std::string op);
+    virtual int eval(EvaluationContext & context);
+    virtual std::string toString();
+    virtual ExpressionType getType();
+    virtual std::string getOperator();
+    virtual Expression* getHS();
+private:
+   std::string op;
+   Expression* hs;
+};
+
+
 
 /*
  * Class: EvaluationContext

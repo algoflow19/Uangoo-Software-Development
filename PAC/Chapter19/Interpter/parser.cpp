@@ -64,6 +64,7 @@ Expression *readT(TokenScanner & scanner) {
    TokenType type = scanner.getTokenType(token);
    if (type == WORD) return new IdentifierExp(token);
    if (type == NUMBER) return new ConstantExp(stringToDouble(token));
+   if(type==OPERATOR&&token!="(") return new SingleOpExp(readT(scanner),token);
    if (token != "(") error("Unexpected token \"" + token + "\"");
    Expression *exp = readE(scanner, 0);
    if (scanner.nextToken() != ")") {
