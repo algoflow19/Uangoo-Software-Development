@@ -25,19 +25,23 @@ int main() {
    TokenScanner scanner;
    scanner.ignoreWhitespace();
    scanner.scanNumbers();
+   Expression* exp;
    while(true){
+       exp=NULL;
       try {
          string line;
          cout << "=> ";
          getline(cin, line);
          if (line == "quit") break;
          scanner.setInput(line);
-         Expression *exp1 = parseExp(scanner);
-         unparse(exp1);
+         exp = parseExp(scanner);
+         unparse(exp);
          cout<<endl;
       } catch (ErrorException ex) {
          cerr << "Error: " << ex.getMessage() << endl;
       }
+       if(exp!=NULL)
+       delete exp;
    }
 
    return 0;
@@ -49,6 +53,7 @@ void unparse(Expression* src){
 
 
 void doUnparse(Expression* src,string op){
+    if(src==NULL) return;
     if(src->getType()==CONSTANT) cout<<src->toString();
     if(src->getType()==IDENTIFIER) cout<<src->toString();
     if(src->getType()==COMPOUND){
@@ -61,3 +66,4 @@ void doUnparse(Expression* src,string op){
     }
 
 }
+

@@ -25,20 +25,25 @@ int main() {
    EvaluationContext context;
    TokenScanner scanner;
    Expression *exp;
+   Expression *chexp;
    scanner.ignoreWhitespace();
    scanner.scanNumbers();
    while(true){
+       exp=chexp=NULL;
       try {
          string line;
          cout << "=> ";
          getline(cin, line);
          if (line == "quit") break;
          scanner.setInput(line);
-         Expression *exp1 = parseExp(scanner);
+         exp = parseExp(scanner);
+         chexp=constantMerge(exp1);
          cout<<constantMerge(exp1)->toString()<<endl;
       } catch (ErrorException ex) {
          cerr << "Error: " << ex.getMessage() << endl;
       }
+       if(exp!=NULL) delete exp;
+       if(chexp!=NULL) delete chexp;
    }
 
    return 0;
@@ -62,3 +67,4 @@ Expression* constantMerge(Expression* src){
     error("Unknow type exp!");
     return NULL;
 }
+

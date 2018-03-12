@@ -27,10 +27,12 @@ int main() {
    EvaluationContext context;
    TokenScanner scanner;
    Expression *exp;
+   Expression *chexp;
    scanner.ignoreWhitespace();
    scanner.scanNumbers();
    while (true) {
       exp = NULL;
+      chexp=NULL;
       try {
          string line;
          cout << "=> ";
@@ -38,11 +40,14 @@ int main() {
          if (line == "quit") break;
          scanner.setInput(line);
          Expression *exp = parseExp(scanner);
-         cout<<changeVariable(exp,"x","y")->toString()<<endl;
+         chexp=changeVariable(exp,"x","y");
+         cout<<"Before:"<<exp->toString()<<endl;
+         cout<<"After:"<<chexp->toString()<<endl;
       } catch (ErrorException ex) {
          cerr << "Error: " << ex.getMessage() << endl;
       }
       if (exp != NULL) delete exp;
+      if (exp != NULL) delete chexp;
    }
    return 0;
 }
