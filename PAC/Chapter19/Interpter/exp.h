@@ -13,8 +13,6 @@
 
 /* Forward reference */
 
-#define int double
-
 class EvaluationContext;
 
 /*
@@ -24,7 +22,7 @@ class EvaluationContext;
  * expression types: CONSTANT, IDENTIFIER, and COMPOUND.
  */
 
-enum ExpressionType { CONSTANT, IDENTIFIER, COMPOUND ,SINGLEOPEXP };
+enum ExpressionType { CONSTANT, IDENTIFIER, COMPOUND ,SINGLEOPEXP,POINTER};
 
 /*
  * Class: Expression
@@ -38,11 +36,10 @@ enum ExpressionType { CONSTANT, IDENTIFIER, COMPOUND ,SINGLEOPEXP };
  *  2. IdentifierExp -- a string representing an identifier
  *  3. CompoundExp   -- two expressions combined by an operator
  *  4. SingleOpExp   -- one expressions combined by an operator
+ *
  * The Expression class defines the interface common to all expressions;
  * each subclass provides its own implementation of the common interface.
  */
-
-
 
 class Expression {
 
@@ -109,7 +106,7 @@ public:
    virtual std::string getOperator();
    virtual Expression *getLHS();
    virtual Expression *getRHS();
-   virtual Expression *getHS();
+   virtual Expression* getHS();
 };
 
 /*
@@ -213,54 +210,43 @@ private:
 };
 
 /*
- * Class: SingleOpExp
- * ------------------
- * To support single operator exp.
- */
-class SingleOpExp : public Expression{
-public:
-
-    SingleOpExp(Expression* hs,std::string op);
-    virtual int eval(EvaluationContext & context);
-    virtual std::string toString();
-    virtual ExpressionType getType();
-    virtual std::string getOperator();
-    virtual Expression* getHS();
-private:
-   std::string op;
-   Expression* hs;
-};
-
-
-
-/*
  * Class: EvaluationContext
  * ------------------------
  * This class encapsulates the information that the evaluator needs to
  * know in order to evaluate an expression.
  */
 
+class Pointer:public Expression{
+public:
+    Pointer(std::string name);
+    virtual std::string toString();
+    virtual int eval(EvaluationContext & context);
+    virtual ExpressionType getType();
+    virtual std::string getIdentifierName();
+
+private:
+    std::string name;
+};
+
+class SingleOpExp:public Expression{
+public:
+    SingleOpExp(Expression * exp_, std::string op_);
+    virtual ~SingleOpExp();
+    virtual std::string toString();
+    virtual int eval(EvaluationContext &context);
+    virtual ExpressionType getType();
+    virtual std::string getOperator();
+    virtual Expression* getHS();
+
+private:
+    std::string op;
+    Expression* exp;
+};
+
+
 class EvaluationContext {
 
 public:
-
-/*
- * Method: setValue
- * Usage: context.setValue(var, value);
- * ------------------------------------
- * Sets the value associated with the specified var.
- */
-
-   void setValue(std::string var, int value);
-
-/*
- * Method: getValue
- * Usage: int value = context.getValue(var);
- * -----------------------------------------
- * Returns the value associated with the specified variable.
- */
-
-   int getValue(std::string var);
 
 /*
  * Method: isDefined
@@ -270,12 +256,22 @@ public:
  */
 
    bool isDefined(std::string var);
+/*
+ * Address-based method
+ * --------------------
+ * using four bit interger to stand for address!
+ */
+
+   int getAddress(std::string name);
+   int getValue(int address);
+   void setValue(int address,int value);
 
 private:
 
-   Map<std::string,int> symbolTable;
+   Map<std::string,int> nameMap;
+   Map<int,int> addressMap;
+
 
 };
 
-#undef int
 #endif

@@ -63,8 +63,8 @@ Expression *readT(TokenScanner & scanner) {
    string token = scanner.nextToken();
    TokenType type = scanner.getTokenType(token);
    if (type == WORD) return new IdentifierExp(token);
-   if (type == NUMBER) return new ConstantExp(stringToDouble(token));
-   if(type==OPERATOR&&token!="(") return new SingleOpExp(readT(scanner),token);
+   if (type == NUMBER) return new ConstantExp(stringToInteger(token));
+   if(type==OPERATOR&&(token=="*"||token=="&")) return new SingleOpExp(readT(scanner),token);
    if (token != "(") error("Unexpected token \"" + token + "\"");
    Expression *exp = readE(scanner, 0);
    if (scanner.nextToken() != ")") {
@@ -83,6 +83,6 @@ Expression *readT(TokenScanner & scanner) {
 int precedence(string token) {
    if (token == "=") return 1;
    if (token == "+" || token == "-") return 2;
-   if (token == "*" || token == "/" || token=="%") return 3;
+   if (token == "*" || token == "/") return 3;
    return 0;
 }

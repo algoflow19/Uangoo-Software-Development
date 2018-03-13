@@ -1,17 +1,13 @@
-
 /*
  * File: exp.cpp
  * -------------
  * This file implements the exp.h interface.
  */
-
 #include <string>
 #include "error.h"
 #include "exp.h"
 #include "strlib.h"
 using namespace std;
-
-#define int double
 
 /*
  * Implementation notes: Expression
@@ -55,7 +51,7 @@ Expression *Expression::getRHS() {
 
 Expression *Expression::getHS()
 {
-    error("getHS: Illegal expression type");
+    error("getHS: Illeagal expression type");
     return NULL;
 }
 
@@ -75,7 +71,7 @@ int ConstantExp::eval(EvaluationContext & context) {
 }
 
 string ConstantExp::toString() {
-   return doubleToString(value);
+   return integerToString(value);
 }
 
 ExpressionType ConstantExp::getType() {
@@ -99,7 +95,7 @@ IdentifierExp::IdentifierExp(string name) {
 
 int IdentifierExp::eval(EvaluationContext & context) {
    if (!context.isDefined(name)) error(name + " is undefined");
-   return context.getValue(name);
+   return context.getValue(context.getAddress(name));
 }
 
 string IdentifierExp::toString() {
@@ -136,7 +132,15 @@ CompoundExp::~CompoundExp() {
 int CompoundExp::eval(EvaluationContext & context) {
    int right = rhs->eval(context);
    if (op == "=") {
-      context.setValue(lhs->getIdentifierName(), right);
+       if(lhs->getType()==SINGLEOPEXP&&lhs->getOperator()=="*")
+       {
+           if(context.isDefined(lhs->getHS()->getIdentifierName()))
+           context.setValue(context.getValue(context.getAddress(lhs->getHS()->getIdentifierName())),right);
+           else
+               error("Undefed refrence to"+lhs->getHS()->getIdentifierName());
+       }
+       else
+           context.setValue(context.getAddress(lhs->getIdentifierName()), right);
       return right;
    }
    int left = lhs->eval(context);
@@ -147,12 +151,6 @@ int CompoundExp::eval(EvaluationContext & context) {
       if (right == 0) error("Division by 0");
       return left / right;
    }
-#ifndef int
-   if(op == "%"){
-       if(right==0) error("Modeled by 0");
-       return left%usingIntHere(right);
-   }
-#endif
    error("Illegal operator in expression");
    return 0;
 }
@@ -184,35 +182,83 @@ Expression *CompoundExp::getRHS() {
  * method on the map used to represent the symbol table.
  */
 
-void EvaluationContext::setValue(string var, int value) {
-   symbolTable.put(var, value);
-}
 
-int EvaluationContext::getValue(string var) {
-   return symbolTable.get(var);
-}
 
 bool EvaluationContext::isDefined(string var) {
-   return symbolTable.containsKey(var);
+    return nameMap.containsKey(var);
 }
 
-SingleOpExp::SingleOpExp(Expression *hs, string op)
+int EvaluationContext::getAddress(string name)
 {
-    this->hs=hs;
-    this->op=op;
+    if(!nameMap.containsKey(name)){
+        nameMap.add(name,1000+nameMap.size());
+    }
+    return nameMap.get(name);
 }
 
-double SingleOpExp::eval(EvaluationContext &context)
+int EvaluationContext::getValue(int address)
 {
-    if(op=="-")
-    return (-1)*hs->eval(context);
-    return -1;
-    error("Unknow Symbol");
+    return addressMap.get(address);
+}
+
+void EvaluationContext::setValue(int address, int value)
+{
+    if(!addressMap.containsKey(address)){
+        addressMap.add(address,value);
+    }
+    else
+        addressMap[address]=value;
+}
+
+Pointer::Pointer(string name)
+{
+    this->name=name;
+}
+
+string Pointer::toString()
+{
+    return name;
+}
+
+int Pointer::eval(EvaluationContext &context)
+{
+    return context.getValue(context.getAddress(name));
+}
+
+ExpressionType Pointer::getType()
+{
+    return POINTER;
+}
+
+string Pointer::getIdentifierName()
+{
+    return name;
+}
+
+
+SingleOpExp::SingleOpExp(Expression *exp_, string op_)
+{
+    this->exp=exp_;
+    this->op=op_;
+}
+
+SingleOpExp::~SingleOpExp()
+{
+    if(exp!=NULL) delete exp;
 }
 
 string SingleOpExp::toString()
 {
-    return op+hs->toString();
+    return op+exp->toString();
+}
+
+int SingleOpExp::eval(EvaluationContext &context)
+{
+    if(op=="&"&&exp->getType()!=CONSTANT&&exp->getType()!=COMPOUND) return  context.getAddress(exp->getIdentifierName());
+    if(op=="*"&&context.isDefined(this->getHS()->getIdentifierName())) return context.getValue(context.getValue(context.getAddress(exp->getIdentifierName())));
+    error("Unexpected exp type!");
+    cerr<<exp->getType()<<endl;
+    return -1;
 }
 
 ExpressionType SingleOpExp::getType()
@@ -225,7 +271,7 @@ string SingleOpExp::getOperator()
     return op;
 }
 
-Expression* SingleOpExp::getHS()
+Expression *SingleOpExp::getHS()
 {
-    return hs;
+    return exp;
 }
