@@ -4,9 +4,10 @@
 4 PRINT -1
 5 LET a=a+k
 6 PRINT a+k
-7 IF a+k < 5000 THEN 5
+7 IF a+k <= 5000 THEN 5
 8 INPUT x
 9 PRINT x
-10 PRINT x*2
+10 IF x==1 THEN 8
+11 PRINT x*2
 50 END
 RUN

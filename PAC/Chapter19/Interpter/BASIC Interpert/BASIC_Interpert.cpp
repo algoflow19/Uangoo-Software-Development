@@ -87,7 +87,7 @@ void runProgram(int startCol,Map<int,string> &codeList,EvaluationContext &contex
 
 
 bool detemindIfTure(TokenScanner& scanner,EvaluationContext& context){
-    int leftValue=readE(scanner,0)->eval(context);
+    int leftValue=readE(scanner,1)->eval(context);
     string firstOp=scanner.nextToken();
     bool first,second=false;
     if(scanner.getTokenType(firstOp)==OPERATOR){
@@ -99,7 +99,7 @@ bool detemindIfTure(TokenScanner& scanner,EvaluationContext& context){
             second=false;
         }
     } else error("Syntax error!");
-    int rightValue=readE(scanner,0)->eval(context);
+    int rightValue=readE(scanner,1)->eval(context);
     if(firstOp=="<")
         first=leftValue<rightValue;
     else if(firstOp==">")
