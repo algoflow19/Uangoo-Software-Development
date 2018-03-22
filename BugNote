@@ -19,3 +19,7 @@ Make sure that your codes is doing what you want!
 template<typename NodeType,typename ArcType>
 void addToSetOne(Graph<NodeType,ArcType> & g,Set<NodeType*> &one,Set<NodeType*> &zero,NodeType* node);
 /* This funtion can't be referenced beacuse NodeType* node is defined! */
+2018年 03月 21日 星期三 12:50:35 CST
+Start thinking the design of class from its useage.
+2018年 03月 21日 星期三 13:30:54 CST
+The complate test is nesserary to build reailable system.

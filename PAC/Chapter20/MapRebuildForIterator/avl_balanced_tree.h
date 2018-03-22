@@ -5,15 +5,6 @@
 
 // Still Can have a Node template here!
 
-template<typename keyType,typename valueType>
-struct mapNode
-{
-    keyType key;
-    valueType value;
-    int bf;
-    mapNode* Left;
-    mapNode* Right;
-};
 
 template<typename NodeType,typename keyType>
 class AVL_Balanced_tree
@@ -33,14 +24,15 @@ public:
      */
     void insertNode(NodeType* node);
     void insertNode(const keyType& key);
-
+    NodeType* getRoot(){ return root; }
     void eraserNode(const keyType& key);
     void clear();
-    int size();
+    void displayTree();
+    int size() const;
 
 private:
 
-
+    void doDisPlay(std::string str,NodeType* &toSearch);
     NodeType* root;
     int count;
 
@@ -52,6 +44,8 @@ private:
     void rotateRight(NodeType* &node);
     void fixLeftBalanced(NodeType* &node);
     void fixRightBalance(NodeType* &node);
+    void fixDleteRightBalance(NodeType* &node);
+    void fixDleteLeftBalance(NodeType* &node);
 
     NodeType* BSTsearch(NodeType* toSearch,const keyType& key);
     void releaseNode(NodeType* node);
@@ -101,25 +95,43 @@ AVL_Balanced_tree<NodeType,keyType>::AVL_Balanced_tree(){
 template<typename NodeType,typename keyType>
 void AVL_Balanced_tree<NodeType,keyType>::clear(){
     releaseNode(root);
+    root=NULL;
 }
 
 template<typename NodeType,typename keyType>
-int AVL_Balanced_tree<NodeType,keyType>::AVL_Balanced_tree::size()
+void AVL_Balanced_tree<NodeType,keyType>::displayTree()
+{
+    if(root==NULL) return;
+    std::string str="";
+    doDisPlay(str,root);
+}
+
+template<typename NodeType,typename keyType>
+int AVL_Balanced_tree<NodeType,keyType>::AVL_Balanced_tree::size() const
 {
     return count;
+}
+
+template<typename NodeType,typename keyType>
+void AVL_Balanced_tree<NodeType,keyType>::doDisPlay(std::__cxx11::string str, NodeType *&toSearch)
+{
+    if(toSearch->Right!=NULL) doDisPlay(str+">> ",toSearch->Right);
+    if(toSearch->Left!=NULL) doDisPlay(str+"<< ",toSearch->Left);
+    std::cout<<str<<toSearch->key<<std::endl;
 }
 
 template<typename NodeType,typename keyType>
 int AVL_Balanced_tree<NodeType,keyType>::AVLReplaceAndFix(NodeType *&toSearch, NodeType *&toReplace)
 {
     if(toSearch->Right==NULL){
-        NodeType* tmp=toReplace;
-        toReplace=toSearch;
+        NodeType* tmp=toSearch;
         toSearch=toSearch->Left;
-        toReplace->Right=tmp->Right;
-        toReplace->Left=tmp->Left;
-        toReplace->bf=tmp->bf;
-        delete tmp;
+        tmp->Right=toReplace->Right;
+        tmp->Left=toReplace->Left;
+        tmp->bf=toReplace->bf;
+        delete toReplace;
+        --count;
+        toReplace=tmp;
         return -1;
     }
     int delate=AVLReplaceAndFix(toSearch->Right,toReplace);
@@ -156,13 +168,13 @@ int AVL_Balanced_tree<NodeType,keyType>::doEraserWork(NodeType *&toSearch, const
         switch(toSearch->bf){
         case -1: toSearch->bf=0; return -1;
         case 0:  toSearch->bf=1; return 0;
-        case 1:  fixRightBalance(toSearch); return 0;
+        case 1:  fixDleteRightBalance(toSearch); return 0;
         }
     }
     delta=doEraserWork(toSearch->Right,key);
     if(delta==0) return 0;
     switch(toSearch->bf){
-    case -1: fixLeftBalanced(toSearch); return 0;
+    case -1: fixDleteLeftBalance(toSearch); return 0;
     case 0:  toSearch->bf=-1; return 0;
     case 1:  toSearch->bf=0; return -1;
     }
@@ -178,13 +190,15 @@ int AVL_Balanced_tree<NodeType,keyType>::AVLInsertNode(NodeType *&toSerach, Node
         toSerach->Right=toSerach->Left=NULL;
         toSerach->bf=0;
         count++;
-        return delta;
+        return 1;
     }
     if(toAdd->key==toSerach->key){
+        NodeType* tmp=toSerach;
         toAdd->Left=toSerach->Left;
         toAdd->Right=toSerach->Right;
         toAdd->bf=toSerach->bf;
-        delete toSerach;
+        toSerach=toAdd;
+        delete tmp;
         return delta;
     }
     if(toAdd->key>toSerach->key){
@@ -263,8 +277,48 @@ void AVL_Balanced_tree<NodeType, keyType>::fixRightBalance(NodeType *&node)
     }   else {
             rotateLeft(node);
             node->Left->bf=node->bf=0;
-        }
     }
+}
+
+template<typename NodeType,typename keyType>
+void AVL_Balanced_tree<NodeType, keyType>::fixDleteRightBalance(NodeType *&node)
+{
+    auto rightNode=node->Right;
+    if(rightNode->bf==-1){
+        int oldBF=rightNode->Left->bf;
+        rotateRight(rightNode);
+        rotateLeft(node);
+        node->bf=0;
+        switch(oldBF){
+        case 0: node->Left->bf=node->Right->bf=0; break;
+        case 1: node->Left->bf=-1; node->Right->bf=0; break;
+        case -1: node->Left->bf=0; node->Right->bf=1; break;
+        }
+    }   else {
+
+            rotateLeft(node);
+            node->Left->bf=node->bf=0;
+    }
+}
+template<typename NodeType,typename keyType>
+void AVL_Balanced_tree<NodeType, keyType>::fixDleteLeftBalance(NodeType *&node)
+{
+    NodeType* leftNode=node->Left;
+    if(leftNode->bf==1){
+        int oldBF=leftNode->Right->bf;
+        rotateLeft(leftNode);
+        rotateRight(node);
+        node->bf=0;
+        switch(oldBF){
+        case 0: node->Left=node->Right=0; break;
+        case 1: node->Left->bf=-1; node->Right->bf=0; break;
+        case -1:node->Left->bf=0;node->Right->bf=1; break;
+        }
+    } else{
+        rotateRight(node);
+        node->bf=node->Right->bf=0;
+    }
+}
 
 
 template<typename NodeType,typename keyType>
