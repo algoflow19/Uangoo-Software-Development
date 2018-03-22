@@ -17,10 +17,9 @@ public:
     /*
      * Method: insertNode(NodeType* node);
      * -----------------------------------
-     * This method will referened the given node point,
-     * so you should not destroy the node or release it
-     * by yourself,this class will do maintain work for you.
-     * Please note that modify key-value always cause unknow error.
+     * This method will referened the given node point,if
+     * the node not in the tree,Otherwise the given point
+     * will be destory,So you should't reference it anymore.
      */
     void insertNode(NodeType* node);
     void insertNode(const keyType& key);
@@ -39,7 +38,7 @@ private:
     int doEraserWork(NodeType* &toSearch,const keyType& key);
     int AVLReplaceAndFix(NodeType* &toSearch,NodeType* &toReplace);
     int AVLInsertNode(NodeType* &toSerach,NodeType* &toAdd);
-    // fix balance operator
+    // fix balance operator/
     void rotateLeft(NodeType* &node);
     void rotateRight(NodeType* &node);
     void fixLeftBalanced(NodeType* &node);
@@ -193,12 +192,11 @@ int AVL_Balanced_tree<NodeType,keyType>::AVLInsertNode(NodeType *&toSerach, Node
         return 1;
     }
     if(toAdd->key==toSerach->key){
-        NodeType* tmp=toSerach;
         toAdd->Left=toSerach->Left;
         toAdd->Right=toSerach->Right;
         toAdd->bf=toSerach->bf;
-        toSerach=toAdd;
-        delete tmp;
+        *toSerach=*toAdd;
+        delete toAdd;
         return delta;
     }
     if(toAdd->key>toSerach->key){
